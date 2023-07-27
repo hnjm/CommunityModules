@@ -1,0 +1,47 @@
+﻿@page
+
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@model Community.UserAccount.UI.Areas.Account.Pages.SettingsModel
+@{
+    Layout = "_Layout";
+}
+
+<partial name="_StatusMessage" model="@Model.StatusMessage" />
+<section class="mb-3">
+    <div class="form-floating mb-3">
+        <input asp-for="Username" class="form-control" disabled />
+        <label asp-for="Username"></label>
+    </div>
+
+    <form method="post" class="mb-3">
+        <div class="mb-3">
+            <label asp-for="GPGPublicKey" class="form-label"></label>
+            <textarea asp-for="GPGPublicKey" class="form-control" rows="10"></textarea>
+            <span asp-validation-for="GPGPublicKey" class="text-danger"></span>
+        </div>
+        <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+    </form>
+</section>
+
+@if ((await AuthorizationService.AuthorizeAsync(User, "GPGOnly")).Succeeded)
+{
+    <section class="mb-3">
+        @if (Model.Is2FAEnabled)
+        {
+            <form method="post" asp-page-handler="Disable2FA">
+                <input type="submit" class="w-100 btn btn-lg btn-warning mr-1" value="Disable 2FA" />
+            </form>
+        }
+        else
+        {
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="w-100 btn btn-lg btn-secondary">Enable GPG 2FA</a>
+        }
+    </section>
+    <section class="mb-3">
+        <form asp-page-handler="DeleteGPGPublicKey" method="post">
+            <input type="submit" class="w-100 btn btn-lg btn-danger" value="Delete GPG key" />
+        </form>
+    </section>
+}

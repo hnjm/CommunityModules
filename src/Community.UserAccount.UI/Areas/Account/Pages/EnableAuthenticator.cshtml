@@ -1,0 +1,24 @@
+﻿@page
+@model Community.UserAccount.UI.Areas.Account.Pages.EnableAuthenticatorModel
+@{
+    Layout = "_Layout";
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+<h3>@ViewData["Title"]</h3>
+<section class="mb-3">
+    <p>
+        Decrypt the following PGP message and enter the code to enable 2FA
+    </p>
+    <partial name="_GPGMessagePartial" model="@Model.GPGMessage" />
+</section>
+
+<form id="send-code" method="post">
+    <div class="mb-3">
+        <label asp-for="Code" class="control-label form-label">Verification Code</label>
+        <input asp-for="Code" class="form-control" autocomplete="off" />
+        <span asp-validation-for="Code" class="text-danger"></span>
+    </div>
+    <button type="submit" class="w-100 btn btn-lg btn-primary">Verify</button>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+</form>
